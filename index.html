@@ -46,20 +46,20 @@
     />
   </head>
   <body>
-    <main class="container mx-auto font-mono">
+    <main class="container mx-auto font-sans">
       <nav
-        class="w-full sm:w-3/4 mx-auto h-20 bg-gray-100 rounded-b-xl flex justify-between items-center px-4 shadow-md"
+        class="fixed top-0 left-3/6 -translate-x-3/6 w-full sm:w-3/4 mx-auto h-20 bg-gray-800 rounded-b-xl flex justify-between items-center px-4 shadow-md"
       >
-        <div class="font-bevan text-3xl italic text-sky-700">Socially</div>
+        <div class="font-bevan text-3xl italic text-sky-500">Socially</div>
         <div class="buttons">
           <button
-            class="hidden bg-white px-4 py-1.5 rounded-full border border-sky-700 cursor-pointer hover:bg-sky-500 hover:border-sky-500 hover:text-white transition duration-300 flex items-center gap-0.5"
+            class="bg-white px-4 py-1.5 rounded-full border border-sky-500 cursor-pointer hover:bg-sky-500 hover:border-sky-500 hover:text-white transition duration-300 flex items-center gap-0.5"
           >
             Login
             <i class="fa-thin fa-right-to-bracket"></i>
           </button>
-          <!-- If Logging -->
-          <div class="">
+          <!-- If Logging [Profile] -->
+          <div class="hidden">
             <img
               class="size-11 rounded-full border-2 border-white"
               src="team-02.png"
@@ -68,6 +68,95 @@
           </div>
         </div>
       </nav>
+
+      <!-- Content -->
+      <div id="content-area" class="w-[99%] sm:w-3/4 mx-auto mt-24 space-y-2">
+        <!-- post -->
+        <div class="post">
+          <div class="header">
+            <img class="header-img" src="team-02.png" alt="Profile Img post" />
+            <div>
+              <div class="name">Profile Name</div>
+              <div class="time">12m</div>
+            </div>
+          </div>
+          <div class="body">
+            <img
+              class="body-img"
+              src="https://images.unsplash.com/photo-1782763558195-caa1373561c2?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Post img"
+            />
+            <h5 class="body-title">Title</h5>
+            <p class="body-text">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+              Quibusdam vitae cumque sit nostrum harum placeat, rerum numquam
+              voluptas beatae quos ipsam nobis, esse hic, necessitatibus ex
+              tempora nihil vero unde.
+            </p>
+          </div>
+          <div class="footer">
+            <i class="fa-light fa-comment"></i>
+            <span>3</span>
+            Comments
+          </div>
+        </div>
+        <div class="post">
+          <div class="header">
+            <img class="header-img" src="team-02.png" alt="Profile Img post" />
+            <div class="info">
+              <div class="name">Profile Name</div>
+              <div class="time">12m</div>
+            </div>
+          </div>
+          <div class="body">
+            <img
+              class="body-img"
+              src="https://images.unsplash.com/photo-1781100037733-fbdfc1629114?q=80&w=1032&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Post img"
+            />
+            <h5 class="body-title">Title</h5>
+            <p class="body-text">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+              Quibusdam vitae cumque sit nostrum harum placeat, rerum numquam
+              voluptas beatae quos ipsam nobis, esse hic, necessitatibus ex
+              tempora nihil vero unde.
+            </p>
+          </div>
+          <div class="footer">
+            <i class="fa-light fa-comment"></i>
+            <span>3</span>
+            Comments
+          </div>
+        </div>
+        <div class="post">
+          <div class="header">
+            <img class="header-img" src="team-02.png" alt="Profile Img post" />
+            <div class="info">
+              <div class="name">Profile Name</div>
+              <div class="time">12m</div>
+            </div>
+          </div>
+          <div class="body">
+            <img
+              class="body-img"
+              src="https://plus.unsplash.com/premium_photo-1721092495875-7541d6cd58e6?q=80&w=928&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+              alt="Post img"
+            />
+            <h5 class="body-title">Title</h5>
+            <p class="body-text">
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+              Quibusdam vitae cumque sit nostrum harum placeat, rerum numquam
+              voluptas beatae quos ipsam nobis, esse hic, necessitatibus ex
+              tempora nihil vero unde.
+            </p>
+          </div>
+          <div class="footer">
+            <i class="fa-light fa-comment"></i>
+            <span>3</span>
+            Comments
+          </div>
+        </div>
+      </div>
     </main>
   </body>
 </html>
