@@ -39,4 +39,34 @@
   .tags span{
     @apply bg-gray-800 px-3 py-1 rounded-full text-base
   }
+  .form{
+    @apply bg-gray-800 text-white w-fit mx-auto p-5 rounded-2xl fixed top-3/6 left-3/6 -translate-3/6 shadow-2xl
+  }
+  .form .close-btn{
+    @apply absolute top-3 left-4 text-white text-xl cursor-pointer hover:text-red-500 transition-all duration-300
+  }
+  .form h1{
+    @apply text-3xl font-bevan text-center mb-5
+  }
+  .form .field{
+    @apply flex flex-col gap-2 mb-5
+  }
+  .form .field label{
+    @apply text-lg font-semibold
+  }
+  .form .field input{
+    @apply p-2 rounded-lg bg-white text-black w-80
+  }
+  .form .create-acount{
+    @apply text-sm text-gray-400 flex gap-2 items-center justify-center mt-5
+  }
+  .form .create-acount span{
+    @apply text-blue-500 cursor-pointer underline
+  }
+  .form .login-btn{
+    @apply bg-blue-500 text-white p-2 rounded-lg w-full cursor-pointer hover:bg-blue-600 transition-all duration-300  
+  }
+  .alert{
+    @apply fixed left-3/6 -translate-x-3/6 md:left-[98%] md:-translate-x-full bottom-4 flex items-center gap-2 w-100 p-5 text-lg font-bold rounded-2xl transition-all duration-300 select-none
+  }
 }
