@@ -568,7 +568,7 @@
     padding: calc(var(--spacing) * 2);
     color: var(--color-black);
   }
-  .form .create-acount {
+  .form .link-to-account {
     margin-top: calc(var(--spacing) * 5);
     display: flex;
     align-items: center;
@@ -578,12 +578,12 @@
     line-height: var(--tw-leading, var(--text-sm--line-height));
     color: var(--color-gray-400);
   }
-  .form .create-acount span {
+  .form .link-to-account span {
     cursor: pointer;
     color: var(--color-blue-500);
     text-decoration-line: underline;
   }
-  .form .login-btn {
+  .form .send-btn {
     width: 100%;
     cursor: pointer;
     border-radius: var(--radius-lg);

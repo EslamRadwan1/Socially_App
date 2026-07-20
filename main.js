@@ -124,25 +124,32 @@ function loginForm() {
   passwordInput.type = "password";
   passwordDiv.append(passwordLabel, passwordInput);
 
-  const loginBtn = document.createElement("button");
-  loginBtn.textContent = "Login";
-  loginBtn.className = "login-btn";
-  loginBtn.addEventListener("click", () => {
+  const sendBtn = document.createElement("button");
+  sendBtn.textContent = "Login";
+  sendBtn.className = "send-btn";
+  sendBtn.addEventListener("click", (e) => {
+    sendBtn.disabled = true;
     const userName = userNameInput.value;
     const password = passwordInput.value;
     if (userName === "" || password === "") {
       showAlert("Please fill in all fields", "bg-orange-500/80");
+      sendBtn.disabled = false;
       return;
     }
     checkUser(userName, password);
+    sendBtn.disabled = false;
   });
 
   const createAcount = document.createElement("div");
-  createAcount.className = "create-acount";
+  createAcount.className = "link-to-account";
   const createAcountText = document.createElement("p");
   createAcountText.textContent = "Don't Have Acount?";
   const createAcountSpan = document.createElement("span");
   createAcountSpan.textContent = "Create Acount";
+  createAcountSpan.addEventListener("click", () => {
+    form.remove();
+    signUpForm();
+  });
   createAcount.append(createAcountText, createAcountSpan);
 
   form.append(
@@ -150,7 +157,7 @@ function loginForm() {
     closeBtn,
     userNameDiv,
     passwordDiv,
-    loginBtn,
+    sendBtn,
     createAcount,
   );
   document.body.append(form);
@@ -183,6 +190,143 @@ async function checkUser(userName, password) {
   } catch (err) {
     console.log(err);
   }
+}
+function signUpForm() {
+  const form = document.createElement("div");
+  form.className = "form";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "close-btn";
+  const closeIcon = document.createElement("i");
+  closeIcon.classList.add("fa-solid", "fa-xmark");
+  closeBtn.append(closeIcon);
+  closeBtn.addEventListener("click", () => {
+    form.remove();
+    mainLoginBtn.disabled = false;
+  });
+
+  const heading = document.createElement("h1");
+  heading.textContent = "Sign-Up";
+
+  const userNameDiv = document.createElement("div");
+  userNameDiv.className = "field";
+  const userNameLabel = document.createElement("label");
+  userNameLabel.textContent = "User Name";
+  const userNameInput = document.createElement("input");
+  userNameInput.type = "text";
+  userNameDiv.append(userNameLabel, userNameInput);
+
+  const passwordDiv = document.createElement("div");
+  passwordDiv.className = "field";
+  const passwordLabel = document.createElement("label");
+  passwordLabel.textContent = "Password";
+  const passwordInput = document.createElement("input");
+  passwordInput.type = "password";
+  passwordDiv.append(passwordLabel, passwordInput);
+
+  const nameDiv = document.createElement("div");
+  nameDiv.className = "field";
+  const nameLabel = document.createElement("label");
+  nameLabel.textContent = "Name";
+  const nameInput = document.createElement("input");
+  nameInput.type = "text";
+  nameDiv.append(nameLabel, nameInput);
+
+  const emailDiv = document.createElement("div");
+  emailDiv.className = "field";
+  const emailLabel = document.createElement("label");
+  emailLabel.textContent = "Email";
+  const emailInput = document.createElement("input");
+  emailInput.type = "email";
+  emailDiv.append(emailLabel, emailInput);
+
+  const imageDiv = document.createElement("div");
+  imageDiv.className = "field";
+  const imageLabel = document.createElement("label");
+  imageLabel.textContent = "Image";
+  const imageInput = document.createElement("input");
+  imageInput.type = "file";
+  imageInput.accept = "image/*";
+  imageDiv.append(imageLabel, imageInput);
+
+  const sendBtn = document.createElement("button");
+  sendBtn.textContent = "Sign up";
+  sendBtn.className = "send-btn";
+  sendBtn.addEventListener("click", () => {
+    const userName = userNameInput.value;
+    const password = passwordInput.value;
+    const name = nameInput.value;
+    const email = emailInput.value;
+    const image = imageInput.files[0];
+    if (userName === "" || password === "" || name === "") {
+      showAlert("Please fill in all fields", "bg-orange-500/80");
+      return;
+    }
+    createUser(userName, password, name, email, image);
+  });
+
+  const logToAccount = document.createElement("div");
+  logToAccount.className = "link-to-account";
+  const logToAccountText = document.createElement("p");
+  logToAccountText.textContent = "Already Have Acount?";
+  const logToAccountSpan = document.createElement("span");
+  logToAccountSpan.textContent = "Login";
+  logToAccountSpan.addEventListener("click", () => {
+    form.remove();
+    loginForm();
+  });
+  logToAccount.append(logToAccountText, logToAccountSpan);
+
+  form.append(
+    heading,
+    closeBtn,
+    userNameDiv,
+    passwordDiv,
+    nameDiv,
+    emailDiv,
+    imageDiv,
+    sendBtn,
+    logToAccount,
+  );
+  document.body.append(form);
+}
+async function createUser(userName, password, name, email, image) {
+  try {
+    const formData = new FormData();
+
+    formData.append("username", userName);
+    formData.append("password", password);
+    formData.append("name", name);
+    formData.append("email", email);
+
+    if (image) {
+      formData.append("image", image);
+    }
+
+    const response = await fetch(`${baseUrl}/register`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+      },
+      body: formData,
+    });
+    const userResponse = await response.json();
+    if (response.status === 422) {
+      showAlert(userResponse.message, "bg-red-500/80");
+    }
+    if (!response.ok) throw new Error("Request Failed");
+    document.querySelector(".form").remove();
+    loginForm();
+    showAlert("Account Created Succussfully", "bg-green-500/80");
+  } catch (err) {
+    console.log(err);
+  }
+}
+function logout() {
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  showAlert("Logged Out Successfully", "bg-pink-500/80");
+  setupUI();
 }
 function setupUI() {
   const token = localStorage.getItem("token");
@@ -219,12 +363,7 @@ function setupUI() {
               <i class="fa-thin fa-right-to-bracket"></i>
             </button>`;
     const logoutBtn = document.getElementById("logout-btn");
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setupUI();
-      showAlert("Logged Out Successfully", "bg-pink-500/80");
-    });
+    logoutBtn.addEventListener("click", logout);
   }
 }
 function showAlert(message, style) {

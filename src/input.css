@@ -57,13 +57,13 @@
   .form .field input{
     @apply p-2 rounded-lg bg-white text-black w-80
   }
-  .form .create-acount{
+  .form .link-to-account{
     @apply text-sm text-gray-400 flex gap-2 items-center justify-center mt-5
   }
-  .form .create-acount span{
+  .form .link-to-account span{
     @apply text-blue-500 cursor-pointer underline
   }
-  .form .login-btn{
+  .form .send-btn{
     @apply bg-blue-500 text-white p-2 rounded-lg w-full cursor-pointer hover:bg-blue-600 transition-all duration-300  
   }
   .alert{
