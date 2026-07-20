@@ -342,29 +342,61 @@ function setupUI() {
       mainLoginBtn.disabled = true;
     });
   } else {
-    const user = localStorage.getItem("user");
+    const user = JSON.parse(localStorage.getItem("user"));
     let profileImage;
-    if (Object.keys(JSON.parse(user).profile_image).length === 0) {
+    if (Object.keys(user.profile_image).length === 0) {
       profileImage =
         "https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0=";
     } else {
-      profileImage = JSON.parse(user).profile_image;
+      profileImage = user.profile_image;
     }
     navBtns.innerHTML = `
-          <div id="profile">
+          <div id="profile" class="cursor-pointer">
             <img
               class="size-11 rounded-full border-2 border-white"
               src="${profileImage}"
               alt="Profile Img"
             />
           </div>
-          <button id="logout-btn" class="bg-white text-sm  px-2 py-1 rounded-full border border-red-500 cursor-pointer hover:bg-red-500 hover:border-red-500 hover:text-white transition duration-300 flex items-center gap-0.5 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed">
-              Logout
-              <i class="fa-thin fa-right-to-bracket"></i>
-            </button>`;
-    const logoutBtn = document.getElementById("logout-btn");
-    logoutBtn.addEventListener("click", logout);
+          <button class="text-white bg-sky-500 size-8 rounded-md cursor-pointer transition-all duration-300 hover:scale-105" title="New Post">
+            <i class="fa-regular fa-plus"></i>
+          </button>`;
+    profilePopUp(user, profileImage);
+    document.getElementById("profile").addEventListener("click", () => {
+      document.getElementById("profile-popup").classList.remove("hidden");
+    });
   }
+}
+function profilePopUp(user, profileImage) {
+  const popUp = `
+      <ul id="profile-popup" class="absolute top-0 right-0 z-10 p-2 bg-gray-800 w-full h-screen divide-y divide-gray-400 transition-all duration-300 sm:w-fit sm:h-fit sm:top-21 sm:rounded-xl border border-gray-500 hidden">
+        <li class="flex items-center gap-4 p-3">
+          <img
+            class="size-11 rounded-full border-2 border-white"
+            src="${profileImage}"
+            alt="profile Img">
+          <div>
+            <span class="block font-bold text-white">${user.username}</span>
+            <span class="block text-gray-400 -mt-1.5">${user.name}</span>
+          </div>
+          <div id="close" class="ml-auto size-8 flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-black/20">
+            <i class="fa-solid fa-xmark text-gray-400"></i>
+          </div>
+        </li>
+        <li class="p-3 cursor-pointer transition-all duration-300 hover:bg-black/20">
+            <i class="fa-light fa-user text-gray-400"></i>
+            <span class="ml-1 text-white">Profile</span>
+        </li>
+        <li id="logout-btn" class="p-3 cursor-pointer transition-all duration-300 hover:bg-black/20">
+            <i class="fa-thin fa-right-to-bracket text-gray-400"></i>
+            <span class="ml-1 text-white">Logout</span>
+        </li>
+      </ul>`;
+  navBtns.innerHTML += popUp;
+  document.getElementById("close").addEventListener("click", () => {
+    document.getElementById("profile-popup").classList.add("hidden");
+  });
+  document.getElementById("logout-btn").addEventListener("click", logout);
 }
 function showAlert(message, style) {
   const div = document.createElement("div");
