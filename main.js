@@ -1,6 +1,7 @@
 const baseUrl = "https://tarmeezacademy.com/api/v1";
 const navBtns = document.getElementById("buttons");
 let mainLoginBtn;
+let createPostBtn;
 const postsArea = document.getElementById("content-area");
 
 setupUI();
@@ -328,6 +329,99 @@ function logout() {
   showAlert("Logged Out Successfully", "bg-pink-500/80");
   setupUI();
 }
+function createPostForm() {
+  const form = document.createElement("div");
+  form.className = "form";
+
+  const closeBtn = document.createElement("button");
+  closeBtn.className = "close-btn";
+  const closeIcon = document.createElement("i");
+  closeIcon.classList.add("fa-solid", "fa-xmark");
+  closeBtn.append(closeIcon);
+  closeBtn.addEventListener("click", () => {
+    form.remove();
+    createPostBtn.disabled = false;
+  });
+
+  const heading = document.createElement("h1");
+  heading.textContent = "New Post";
+
+  const titleDiv = document.createElement("div");
+  titleDiv.className = "field";
+  const titleLabel = document.createElement("label");
+  titleLabel.textContent = "Title";
+  const titleInput = document.createElement("input");
+  titleInput.type = "text";
+  titleDiv.append(titleLabel, titleInput);
+
+  const bodyDiv = document.createElement("div");
+  bodyDiv.className = "field";
+  const bodyLabel = document.createElement("label");
+  bodyLabel.textContent = "Body";
+  const bodyInput = document.createElement("textarea");
+  bodyInput.type = "password";
+  bodyDiv.append(bodyLabel, bodyInput);
+
+  const imageDiv = document.createElement("div");
+  imageDiv.className = "field";
+  const imageLabel = document.createElement("label");
+  imageLabel.textContent = "Image";
+  const imageInput = document.createElement("input");
+  imageInput.type = "file";
+  imageInput.accept = "image/*";
+  imageDiv.append(imageLabel, imageInput);
+
+  const sendBtn = document.createElement("button");
+  sendBtn.textContent = "Create Post";
+  sendBtn.className = "send-btn";
+  sendBtn.addEventListener("click", (e) => {
+    sendBtn.disabled = true;
+    const title = titleInput.value;
+    const body = bodyInput.value;
+    const img = imageInput.files[0];
+    if (title === "" && body === "" && img === "") {
+      showAlert("Please fill in any field", "bg-orange-500/80");
+      sendBtn.disabled = false;
+      return;
+    }
+    createPost(title, body, img);
+    sendBtn.disabled = false;
+  });
+
+  form.append(heading, closeBtn, titleDiv, bodyDiv, imageDiv, sendBtn);
+  document.body.append(form);
+}
+async function createPost(title, body, img) {
+  try {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("body", body);
+    if (img) {
+      formData.append("image", img);
+    }
+
+    const response = await fetch(`${baseUrl}/posts`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: formData,
+    });
+    const postResponse = await response.json();
+    if (response.status === 422) {
+      showAlert(postResponse.message, "bg-red-500/80");
+    }
+    if (!response.ok) throw new Error("Request Failed");
+    document.querySelector(".form").remove();
+    createPostBtn.disabled = false;
+    showAlert("Post Created Succussfully", "bg-green-500/80");
+    postsArea.innerHTML = "";
+    getPosts();
+  } catch (err) {
+    console.log(err);
+  }
+}
 function setupUI() {
   const token = localStorage.getItem("token");
   if (token == null) {
@@ -358,12 +452,17 @@ function setupUI() {
               alt="Profile Img"
             />
           </div>
-          <button class="text-white bg-sky-500 size-8 rounded-md cursor-pointer transition-all duration-300 hover:scale-105" title="New Post">
+          <button id="add-post-btn" class="text-white bg-sky-500 size-8 rounded-md cursor-pointer transition-all duration-300 hover:scale-105 disabled:bg-gray-400 disabled:border-gray-400 disabled:text-gray-600 disabled:cursor-not-allowed" title="New Post">
             <i class="fa-regular fa-plus"></i>
           </button>`;
     profilePopUp(user, profileImage);
     document.getElementById("profile").addEventListener("click", () => {
       document.getElementById("profile-popup").classList.remove("hidden");
+    });
+    createPostBtn = document.getElementById("add-post-btn");
+    createPostBtn.addEventListener("click", () => {
+      createPostForm();
+      createPostBtn.disabled = true;
     });
   }
 }

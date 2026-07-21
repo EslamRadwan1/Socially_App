@@ -54,8 +54,9 @@
   .form .field label{
     @apply text-lg font-semibold
   }
-  .form .field input{
-    @apply p-2 rounded-lg bg-white text-black w-80
+  .form .field input,
+  .form .field textarea{
+    @apply p-2 rounded-lg bg-white text-black w-80 resize-none
   }
   .form .link-to-account{
     @apply text-sm text-gray-400 flex gap-2 items-center justify-center mt-5
