@@ -1,4 +1,5 @@
 const baseUrl = "https://tarmeezacademy.com/api/v1";
+let currentPage = 1;
 const navBtns = document.getElementById("buttons");
 let mainLoginBtn;
 let createPostBtn;
@@ -9,7 +10,9 @@ getPosts();
 
 async function getPosts() {
   try {
-    const response = await fetch(`${baseUrl}/posts?limit=50`);
+    const response = await fetch(
+      `${baseUrl}/posts?limit=50&page=${currentPage}`,
+    );
     if (!response.ok) {
       showAlert("Request Failed", "bg-red-500/80");
       throw new Error("Request Failed");
@@ -18,6 +21,12 @@ async function getPosts() {
     const posts = postsResponse.data;
     for (let post of posts) {
       showPost(post);
+    }
+    const nextPage = postsResponse.links.next;
+    if (nextPage !== null) {
+      window.addEventListener("scroll", handleInfinityScroll);
+    } else {
+      window.removeEventListener("scroll", handleInfinityScroll);
     }
   } catch (err) {
     console.log(err);
@@ -58,6 +67,7 @@ function showPost(postObj) {
     bodyImg.className = "body-img";
     bodyImg.src = postObj.image;
     bodyImg.alt = "Post Image";
+    bodyImg.draggable = false;
     body.append(bodyImg);
   }
   const bodyTitle = document.createElement("h5");
@@ -74,11 +84,17 @@ function showPost(postObj) {
 
   const footer = document.createElement("div");
   footer.className = "footer";
+
+  const commentDiv = document.createElement("div");
+  commentDiv.className = "comments";
   const cIcon = document.createElement("i");
   cIcon.classList.add("fa-light", "fa-comment");
   const commentSpan = document.createElement("span");
   const commentCount = document.createTextNode(postObj.comments_count);
   commentSpan.append(commentCount);
+  commentDiv.append(cIcon, commentSpan, "Comments");
+  // commentDiv.addEventListener("click", showComments)
+
   const tagsDiv = document.createElement("div");
   tagsDiv.className = "tags";
   for (let i = 0; i < postObj.tags.length; i++) {
@@ -87,7 +103,7 @@ function showPost(postObj) {
     tag.append(tagName);
     tagsDiv.append(tag);
   }
-  footer.append(cIcon, commentSpan, "Comments", tagsDiv);
+  footer.append(commentDiv, tagsDiv);
 
   post.append(header, body, footer);
   postsArea.append(post);
@@ -513,4 +529,18 @@ function showAlert(message, style) {
       div.remove();
     }, 500);
   }, 2000);
+}
+function handleInfinityScroll() {
+  const endOfPage =
+    window.innerHeight + window.pageYOffset ===
+    document.documentElement.scrollHeight;
+
+  if (endOfPage) {
+    document.getElementById("post-loading").classList.remove("invisible");
+    currentPage++;
+    getPosts();
+    setTimeout(() => {
+      document.getElementById("post-loading").classList.add("invisible");
+    }, 5000);
+  }
 }
