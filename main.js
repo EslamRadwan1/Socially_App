@@ -35,6 +35,7 @@ async function getPosts() {
 function showPost(postObj) {
   const post = document.createElement("div");
   post.className = "post";
+  post.dataset.id = postObj.id;
 
   const header = document.createElement("div");
   header.className = "header";
@@ -93,7 +94,9 @@ function showPost(postObj) {
   const commentCount = document.createTextNode(postObj.comments_count);
   commentSpan.append(commentCount);
   commentDiv.append(cIcon, commentSpan, "Comments");
-  // commentDiv.addEventListener("click", showComments)
+  commentDiv.addEventListener("click", function () {
+    showComments(post.dataset.id);
+  });
 
   const tagsDiv = document.createElement("div");
   tagsDiv.className = "tags";
@@ -105,7 +108,12 @@ function showPost(postObj) {
   }
   footer.append(commentDiv, tagsDiv);
 
-  post.append(header, body, footer);
+  const commentsContainer = document.createElement("div");
+  commentsContainer.classList.add("post-comments");
+  commentsContainer.id = postObj.id;
+  commentsContainer.dataset.comments = postObj.comments_count;
+
+  post.append(header, body, footer, commentsContainer);
   postsArea.append(post);
 }
 function loginForm() {
@@ -434,6 +442,113 @@ async function createPost(title, body, img) {
     showAlert("Post Created Succussfully", "bg-green-500/80");
     postsArea.innerHTML = "";
     getPosts();
+  } catch (err) {
+    console.log(err);
+  }
+}
+function showComments(postID) {
+  document.querySelectorAll(".post-comments").forEach((pc) => {
+    pc.innerHTML = "";
+    pc.classList.remove("comments-show");
+  });
+
+  const postComments = document.getElementById(postID);
+  postComments.classList.add("comments-show");
+
+  const content = `
+    <div class="top-0 flex items-center w-full border-b border-b-gray-600 pb-2 mb-4">
+      <div id="closeComments" class="size-8 flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-black/20">
+        <i class="fa-regular fa-arrow-left text-gray-400"></i>
+      </div>
+      <div class="text-center flex-1 text-white">
+        <i class="fa-light fa-comment"></i>
+        <span>${postComments.dataset.comments}</span>
+        Comments
+      </div>
+    </div>
+
+    <div class="write-comment">
+      <input id="comment-input" type="text" placeholder="leave your comment">
+      <div class="send-comment">
+        <i class="fa-regular fa-paper-plane-top"></i>
+      </div>
+    </div>
+
+    <div id="commentsArea"></div>
+  `;
+  postComments.innerHTML = content;
+  document.getElementById("closeComments").addEventListener("click", () => {
+    postComments.innerHTML = "";
+    document.getElementById(postID).classList.remove("comments-show");
+  });
+  document.querySelector(".send-comment").addEventListener("click", () => {
+    createComment(postID);
+  });
+  showTheComment(postID);
+}
+async function showTheComment(postID) {
+  try {
+    const response = await fetch(`${baseUrl}/posts/${postID}`);
+    if (!response.ok) {
+      showAlert("Request Failed", "bg-red-500/80");
+      throw new Error("Request Failed");
+    }
+    const postResponse = await response.json();
+    const commentsResponse = postResponse.data.comments;
+    console.log(commentsResponse);
+
+    for (let i = 0; i < commentsResponse.length; i++) {
+      const comment = document.createElement("div");
+      comment.className = "theComment";
+
+      const userImg = document.createElement("img");
+      userImg.className = "header-img";
+      if (Object.keys(commentsResponse[i].author.profile_image).length === 0) {
+        userImg.src =
+          "https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0=";
+      } else {
+        userImg.src = commentsResponse[i].author.profile_image;
+      }
+
+      const userName = document.createElement("div");
+      userName.className = "name";
+      userName.append(commentsResponse[i].author.name);
+
+      const userComment = document.createElement("p");
+      userComment.className = "body-text";
+      userComment.append(commentsResponse[i].body);
+
+      const info = document.createElement("div");
+      info.append(userName, userComment);
+
+      comment.append(userImg, info);
+
+      document.getElementById("commentsArea").append(comment);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function createComment(postID) {
+  try {
+    const theComment = document.getElementById("comment-input").value;
+    const response = await fetch(`${baseUrl}/posts/${postID}/comments`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify({
+        body: theComment,
+      }),
+    });
+    if (!response.ok) {
+      showAlert("Request Failed", "bg-red-500/80");
+      throw new Error("Request Failed");
+    }
+    showAlert("Comment Created Succussfully", "bg-green-500/80");
+    showComments(postID);
   } catch (err) {
     console.log(err);
   }

@@ -223,6 +223,9 @@
   .z-10 {
     z-index: 10;
   }
+  .z-100 {
+    z-index: 100;
+  }
   .container {
     width: 100%;
     @media (width >= 40rem) {
@@ -249,6 +252,9 @@
   }
   .mt-24 {
     margin-top: calc(var(--spacing) * 24);
+  }
+  .mb-4 {
+    margin-bottom: calc(var(--spacing) * 4);
   }
   .ml-1 {
     margin-left: var(--spacing);
@@ -290,6 +296,9 @@
   }
   .w-full {
     width: 100%;
+  }
+  .flex-1 {
+    flex: 1;
   }
   .-translate-x-3\/6 {
     --tw-translate-x: calc(calc(3 / 6 * 100%) * -1);
@@ -355,6 +364,10 @@
     border-style: var(--tw-border-style);
     border-width: 5px;
   }
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+  }
   .border-gray-500 {
     border-color: var(--color-gray-500);
   }
@@ -369,6 +382,9 @@
   }
   .border-r-gray-800 {
     border-right-color: var(--color-gray-800);
+  }
+  .border-b-gray-600 {
+    border-bottom-color: var(--color-gray-600);
   }
   .bg-gray-800 {
     background-color: var(--color-gray-800);
@@ -417,6 +433,12 @@
   }
   .py-5 {
     padding-block: calc(var(--spacing) * 5);
+  }
+  .pb-2 {
+    padding-bottom: calc(var(--spacing) * 2);
+  }
+  .text-center {
+    text-align: center;
   }
   .font-bevan {
     font-family: var(--font-bevan);
@@ -522,6 +544,7 @@
 }
 @layer components {
   .post {
+    position: relative;
     overflow: hidden;
     border-radius: var(--radius-xl);
     --tw-shadow: 0 20px 25px -5px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 8px 10px -6px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
@@ -604,8 +627,17 @@
   }
   .comments {
     display: flex;
+    cursor: pointer;
     align-items: center;
     gap: var(--spacing);
+  }
+  .theComment {
+    margin-bottom: calc(var(--spacing) * 2);
+    display: flex;
+    gap: calc(var(--spacing) * 3);
+    border-radius: var(--radius-xl);
+    background-color: var(--color-gray-600);
+    padding: calc(var(--spacing) * 2);
   }
   .tags {
     margin-left: var(--spacing);
@@ -620,6 +652,65 @@
     padding-block: var(--spacing);
     font-size: var(--text-base);
     line-height: var(--tw-leading, var(--text-base--line-height));
+  }
+  .post-comments {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    z-index: 9;
+    height: 0px;
+    width: 100%;
+    scrollbar-width: none;
+    overflow-x: auto;
+    border-radius: var(--radius-xl);
+    background-color: var(--color-gray-800);
+    padding: calc(var(--spacing) * 2);
+    opacity: 0%;
+    transition-property: all;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+    --tw-duration: 300ms;
+    transition-duration: 300ms;
+  }
+  .comments-show {
+    height: calc(5 / 6 * 100%);
+    opacity: 100%;
+  }
+  .write-comment {
+    margin-inline: auto;
+    margin-bottom: calc(var(--spacing) * 4);
+    display: flex;
+    width: 90%;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: calc(infinity * 1px);
+    background-color: var(--color-gray-400);
+    padding: calc(var(--spacing) * 2);
+  }
+  .write-comment input {
+    width: 100%;
+    background-color: transparent;
+    padding: calc(var(--spacing) * 2);
+    --tw-outline-style: none;
+    outline-style: none;
+  }
+  .write-comment .send-comment {
+    display: flex;
+    height: calc(var(--spacing) * 10);
+    width: calc(var(--spacing) * 11);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: calc(infinity * 1px);
+    background-color: var(--color-gray-700);
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-gray-600);
+      }
+    }
   }
   .form {
     position: fixed;
