@@ -8,6 +8,7 @@
       "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
+    --color-red-400: oklch(70.4% 0.191 22.216);
     --color-red-500: oklch(63.7% 0.237 25.331);
     --color-orange-500: oklch(70.5% 0.213 47.604);
     --color-green-500: oklch(72.3% 0.219 149.579);
@@ -16,6 +17,7 @@
     --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-pink-500: oklch(65.6% 0.241 354.308);
     --color-gray-200: oklch(92.8% 0.006 264.531);
+    --color-gray-300: oklch(87.2% 0.01 258.338);
     --color-gray-400: oklch(70.7% 0.022 261.325);
     --color-gray-500: oklch(55.1% 0.027 264.364);
     --color-gray-600: oklch(44.6% 0.03 256.802);
@@ -250,6 +252,12 @@
   .-mt-1\.5 {
     margin-top: calc(var(--spacing) * -1.5);
   }
+  .mt-7 {
+    margin-top: calc(var(--spacing) * 7);
+  }
+  .mt-10 {
+    margin-top: calc(var(--spacing) * 10);
+  }
   .mt-24 {
     margin-top: calc(var(--spacing) * 24);
   }
@@ -279,6 +287,10 @@
     width: calc(var(--spacing) * 11);
     height: calc(var(--spacing) * 11);
   }
+  .size-25 {
+    width: calc(var(--spacing) * 25);
+    height: calc(var(--spacing) * 25);
+  }
   .h-10 {
     height: calc(var(--spacing) * 10);
   }
@@ -290,6 +302,9 @@
   }
   .w-10 {
     width: calc(var(--spacing) * 10);
+  }
+  .w-70 {
+    width: calc(var(--spacing) * 70);
   }
   .w-\[99\%\] {
     width: 99%;
@@ -331,10 +346,18 @@
   .gap-4 {
     gap: calc(var(--spacing) * 4);
   }
+  .gap-5 {
+    gap: calc(var(--spacing) * 5);
+  }
   :where(.space-y-2 > :not(:last-child)) {
     --tw-space-y-reverse: 0;
     margin-block-start: calc(calc(var(--spacing) * 2) * var(--tw-space-y-reverse));
     margin-block-end: calc(calc(var(--spacing) * 2) * calc(1 - var(--tw-space-y-reverse)));
+  }
+  :where(.space-y-4 > :not(:last-child)) {
+    --tw-space-y-reverse: 0;
+    margin-block-start: calc(calc(var(--spacing) * 4) * var(--tw-space-y-reverse));
+    margin-block-end: calc(calc(var(--spacing) * 4) * calc(1 - var(--tw-space-y-reverse)));
   }
   :where(.divide-y > :not(:last-child)) {
     --tw-divide-y-reverse: 0;
@@ -351,6 +374,9 @@
   }
   .rounded-md {
     border-radius: var(--radius-md);
+  }
+  .rounded-xl {
+    border-radius: var(--radius-xl);
   }
   .border {
     border-style: var(--tw-border-style);
@@ -386,6 +412,9 @@
   .border-b-gray-600 {
     border-bottom-color: var(--color-gray-600);
   }
+  .bg-gray-700 {
+    background-color: var(--color-gray-700);
+  }
   .bg-gray-800 {
     background-color: var(--color-gray-800);
   }
@@ -407,6 +436,12 @@
       background-color: color-mix(in oklab, var(--color-pink-500) 80%, transparent);
     }
   }
+  .bg-red-400\/70 {
+    background-color: color-mix(in srgb, oklch(70.4% 0.191 22.216) 70%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-red-400) 70%, transparent);
+    }
+  }
   .bg-red-500\/80 {
     background-color: color-mix(in srgb, oklch(63.7% 0.237 25.331) 80%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -418,6 +453,9 @@
   }
   .bg-white {
     background-color: var(--color-white);
+  }
+  .object-cover {
+    object-fit: cover;
   }
   .p-2 {
     padding: calc(var(--spacing) * 2);
@@ -446,16 +484,30 @@
   .font-sans {
     font-family: var(--font-sans);
   }
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
   .text-3xl {
     font-size: var(--text-3xl);
     line-height: var(--tw-leading, var(--text-3xl--line-height));
+  }
+  .text-sm {
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
   }
   .font-bold {
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
   }
+  .text-gray-300 {
+    color: var(--color-gray-300);
+  }
   .text-gray-400 {
     color: var(--color-gray-400);
+  }
+  .text-red-400 {
+    color: var(--color-red-400);
   }
   .text-sky-500 {
     color: var(--color-sky-500);
@@ -504,6 +556,9 @@
       .hover\:bg-black\/20:hover {
         background-color: color-mix(in oklab, var(--color-black) 20%, transparent);
       }
+    }
+    .hover\:bg-red-400:hover {
+      background-color: var(--color-red-400);
     }
     .hover\:bg-sky-500:hover {
       background-color: var(--color-sky-500);
@@ -560,6 +615,7 @@
   .header-img {
     width: calc(var(--spacing) * 10);
     height: calc(var(--spacing) * 10);
+    cursor: pointer;
     border-radius: calc(infinity * 1px);
     border-style: var(--tw-border-style);
     border-width: 2px;
@@ -578,6 +634,52 @@
     font-size: var(--text-xs);
     line-height: var(--tw-leading, var(--text-xs--line-height));
     color: var(--color-gray-200);
+  }
+  .editsIcons {
+    margin-left: auto;
+    display: flex;
+    gap: calc(var(--spacing) * 2);
+  }
+  .editsIcons > .icon {
+    display: flex;
+    width: calc(var(--spacing) * 8);
+    height: calc(var(--spacing) * 8);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-lg);
+    background-color: var(--color-gray-600);
+    color: var(--color-white);
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-gray-500);
+      }
+    }
+  }
+  .editsIcons > .icon:last-child {
+    background-color: color-mix(in srgb, oklch(70.4% 0.191 22.216) 70%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-red-400) 70%, transparent);
+    }
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-red-400);
+      }
+    }
+  }
+  .edit i {
+    pointer-events: none;
+  }
+  .image-holder {
+    width: calc(var(--spacing) * 15);
+    height: calc(var(--spacing) * 15);
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+    --tw-border-style: dashed;
+    border-style: dashed;
   }
   .body {
     width: 100%;

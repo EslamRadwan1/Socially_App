@@ -1,4 +1,6 @@
-const baseUrl = "https://tarmeezacademy.com/api/v1";
+import { showUserData } from "./profile.js";
+
+export const baseUrl = "https://tarmeezacademy.com/api/v1";
 let currentPage = 1;
 const navBtns = document.getElementById("buttons");
 let mainLoginBtn;
@@ -6,7 +8,9 @@ let createPostBtn;
 const postsArea = document.getElementById("content-area");
 
 setupUI();
-getPosts();
+if (window.location.pathname.includes("index.html")) {
+  getPosts();
+}
 
 async function getPosts() {
   try {
@@ -36,6 +40,7 @@ function showPost(postObj) {
   const post = document.createElement("div");
   post.className = "post";
   post.dataset.id = postObj.id;
+  post.dataset.user = postObj.author.id;
 
   const header = document.createElement("div");
   header.className = "header";
@@ -351,6 +356,7 @@ function logout() {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
   showAlert("Logged Out Successfully", "bg-pink-500/80");
+  window.location.href = "index.html";
   setupUI();
 }
 function createPostForm() {
@@ -383,7 +389,6 @@ function createPostForm() {
   const bodyLabel = document.createElement("label");
   bodyLabel.textContent = "Body";
   const bodyInput = document.createElement("textarea");
-  bodyInput.type = "password";
   bodyDiv.append(bodyLabel, bodyInput);
 
   const imageDiv = document.createElement("div");
@@ -440,8 +445,15 @@ async function createPost(title, body, img) {
     document.querySelector(".form").remove();
     createPostBtn.disabled = false;
     showAlert("Post Created Succussfully", "bg-green-500/80");
-    postsArea.innerHTML = "";
-    getPosts();
+    if (window.location.pathname === "/index.html") {
+      postsArea.innerHTML = "";
+      getPosts();
+    }
+    if (window.location.pathname === "/profile.html") {
+      document.querySelector(".profile-posts").innerHTML = "";
+      const user = JSON.parse(localStorage.getItem("user"));
+      getUser(user.id);
+    }
   } catch (err) {
     console.log(err);
   }
@@ -470,7 +482,7 @@ function showComments(postID) {
     <div class="write-comment">
       <input id="comment-input" type="text" placeholder="leave your comment">
       <div class="send-comment">
-        <i class="fa-regular fa-paper-plane-top"></i>
+        <i class="fa-regular fa-paper-plane-top text-white"></i>
       </div>
     </div>
 
@@ -495,7 +507,6 @@ async function showTheComment(postID) {
     }
     const postResponse = await response.json();
     const commentsResponse = postResponse.data.comments;
-    console.log(commentsResponse);
 
     for (let i = 0; i < commentsResponse.length; i++) {
       const comment = document.createElement("div");
@@ -543,8 +554,9 @@ async function createComment(postID) {
         body: theComment,
       }),
     });
+    const commentResponse = await response.json();
     if (!response.ok) {
-      showAlert("Request Failed", "bg-red-500/80");
+      showAlert(commentResponse.message, "bg-red-500/80");
       throw new Error("Request Failed");
     }
     showAlert("Comment Created Succussfully", "bg-green-500/80");
@@ -553,7 +565,7 @@ async function createComment(postID) {
     console.log(err);
   }
 }
-function setupUI() {
+export function setupUI() {
   const token = localStorage.getItem("token");
   if (token == null) {
     navBtns.innerHTML = `
@@ -576,7 +588,7 @@ function setupUI() {
       profileImage = user.profile_image;
     }
     navBtns.innerHTML = `
-          <div id="profile" class="cursor-pointer">
+          <div id="profile" class="cursor-pointer" data-user="${user.id}">
             <img
               class="size-11 rounded-full border-2 border-white"
               src="${profileImage}"
@@ -614,8 +626,16 @@ function profilePopUp(user, profileImage) {
           </div>
         </li>
         <li class="p-3 cursor-pointer transition-all duration-300 hover:bg-black/20">
+          <a href="index.html" class="w-full block">
+            <i class="fa-light fa-house text-gray-400"></i>
+            <span class="ml-1 text-white">Home</span>
+          </a>
+        </li>
+        <li id="profileLink" class="p-3 cursor-pointer transition-all duration-300 hover:bg-black/20">
+          <a href="profile.html" class="w-full block">
             <i class="fa-light fa-user text-gray-400"></i>
             <span class="ml-1 text-white">Profile</span>
+          </a>
         </li>
         <li id="logout-btn" class="p-3 cursor-pointer transition-all duration-300 hover:bg-black/20">
             <i class="fa-thin fa-right-to-bracket text-gray-400"></i>
@@ -627,8 +647,26 @@ function profilePopUp(user, profileImage) {
     document.getElementById("profile-popup").classList.add("hidden");
   });
   document.getElementById("logout-btn").addEventListener("click", logout);
+  document.getElementById("profileLink").onclick = getUser(user.id);
 }
-function showAlert(message, style) {
+async function getUser(userID) {
+  try {
+    const response = await fetch(`${baseUrl}/users/${userID}`);
+    if (!response.ok) {
+      showAlert("Request Failed", "bg-red-500/80");
+      throw new Error("Request Failed");
+    }
+    const userResponse = await response.json();
+    const theUser = userResponse.data;
+
+    if (window.location.pathname.includes("profile.html")) {
+      showUserData(theUser);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+export function showAlert(message, style) {
   const div = document.createElement("div");
   div.classList.add("alert", style);
   const icon = document.createElement("i");

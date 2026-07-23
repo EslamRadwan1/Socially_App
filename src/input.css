@@ -10,13 +10,28 @@
     @apply flex items-center gap-2 bg-gray-700 p-2;
   }
   .header-img {
-    @apply size-10 rounded-full border-2 border-white object-cover;
+    @apply size-10 rounded-full border-2 border-white object-cover cursor-pointer;
   }
   .name {
     @apply text-lg font-medium font-sans text-white;
   }
   .time {
-    @apply text-xs text-gray-200;
+    @apply text-xs text-gray-200 
+  }
+  .editsIcons{
+    @apply flex gap-2 ml-auto
+  }
+  .editsIcons > .icon{
+    @apply text-white size-8 flex items-center justify-center rounded-lg bg-gray-600 cursor-pointer transition hover:bg-gray-500
+  }
+  .editsIcons > .icon:last-child{
+    @apply bg-red-400/70 hover:bg-red-400
+  }
+  .edit i{
+    @apply pointer-events-none
+  }
+  .image-holder{
+    @apply size-15 border border-dashed 
   }
   .body {
     @apply w-full bg-gray-600 border-y p-4;

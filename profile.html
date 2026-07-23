@@ -24,7 +24,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png"> -->
 
     <!-- Title -->
-    <title>Socially</title>
+    <title>Socially | Profile</title>
 
     <!-- Styles -->
     <!-- <link rel="canonical" href=""> -->
@@ -59,18 +59,41 @@
       </nav>
 
       <!-- Content -->
-      <div id="content-area" class="w-[99%] sm:w-3/4 mx-auto mt-24 space-y-2">
-        <!-- posts -->
-      </div>
       <div
-        id="post-loading"
-        class="flex justify-center items-center gap-2 py-5 invisible"
+        id="profile-content-area"
+        class="w-[99%] sm:w-3/4 mx-auto mt-24 space-y-2"
       >
-        <span
-          class="w-10 h-10 rounded-full border-5 border-gray-600 border-r-gray-800 animate-spin"
-        ></span>
+        <!-- Profile Info -->
+        <div
+          class="flex justify-between items-center bg-gray-700 rounded-xl p-3"
+        >
+          <div class="space-y-4 text-white">
+            <div>
+              <div id="theName" class="text-2xl font-bold"></div>
+              <div id="theUserName" class="text-sm text-gray-300"></div>
+            </div>
+            <div class="flex items-center gap-5">
+              <div class="text-center">
+                <span id="postsCount"></span>
+                <p class="text-gray-300">Posts</p>
+              </div>
+              <div class="text-center">
+                <span id="commentsCount"></span>
+                <p class="text-gray-300">Comments</p>
+              </div>
+            </div>
+          </div>
+          <img
+            id="userImg"
+            src=""
+            alt="profile image"
+            class="size-25 rounded-full border-2 border-white object-cover"
+          />
+        </div>
+        <!-- Posts -->
+        <div class="profile-posts space-y-2 mt-7"></div>
       </div>
     </main>
-    <script src="main.js" type="module"></script>
+    <script src="profile.js" type="module"></script>
   </body>
 </html>
