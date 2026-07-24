@@ -240,6 +240,7 @@ async function checkUser(userName, password) {
     const user = userResponse.user;
     const token = userResponse.token;
     document.querySelector(".overlay").remove();
+    document.body.style.overflow = "";
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
     setupUI();
@@ -455,57 +456,6 @@ function createPostForm() {
   imageInput.accept = "image/*";
   imageDiv.append(imageLabel, imageInput);
 
-  const tagsDiv = document.createElement("div");
-  tagsDiv.className = "field";
-  const tagsLabel = document.createElement("label");
-  tagsLabel.textContent = "Tags";
-  const tags = document.createElement("div");
-  tags.className = "tags";
-
-  let tagsArray = [];
-  let myTags = [];
-
-  let tagsRequest = async () => {
-    const response = await fetch(`${baseUrl}/tags`);
-    if (!response.ok) {
-      showAlert("Request Failed", "bg-red-500/80");
-      throw new Error("Request Failed");
-    }
-    const tagsResponse = await response.json();
-    const theTags = tagsResponse.data;
-
-    for (let i = 0; i < theTags.length; i++) {
-      const tag = document.createElement("div");
-      const checkbox = document.createElement("input");
-      checkbox.id = `tag${i + 1}`;
-      checkbox.type = "checkbox";
-      checkbox.name = "tags";
-      const customCheckbox = document.createElement("label");
-      customCheckbox.setAttribute("for", `tag${i + 1}`);
-      customCheckbox.append(theTags[i].name);
-
-      tag.append(checkbox, customCheckbox);
-      tags.append(tag);
-
-      tagsArray.push(theTags[i]);
-
-      checkbox.addEventListener("change", () => {
-        if (checkbox.checked) {
-          if (!myTags.includes(theTags[i])) {
-            myTags.push(theTags[i]);
-          }
-        } else {
-          const index = myTags.indexOf(theTags[i]);
-          if (index > -1) {
-            myTags.splice(index, 1);
-          }
-        }
-      });
-    }
-    tagsDiv.append(tagsLabel, tags);
-  };
-  tagsRequest();
-
   const sendBtn = document.createElement("button");
   sendBtn.textContent = "Create Post";
   sendBtn.className = "send-btn";
@@ -514,21 +464,20 @@ function createPostForm() {
     const title = titleInput.value;
     const body = bodyInput.value;
     const img = imageInput.files[0];
-    const tags = myTags;
     if (title === "" && body === "" && img === "") {
       showAlert("Please fill in any field", "bg-orange-500/80");
       sendBtn.disabled = false;
       return;
     }
-    createPost(title, body, img, tags);
+    createPost(title, body, img);
     sendBtn.disabled = false;
   });
 
-  form.append(heading, closeBtn, titleDiv, bodyDiv, imageDiv, tagsDiv, sendBtn);
+  form.append(heading, closeBtn, titleDiv, bodyDiv, imageDiv, sendBtn);
   overlay.append(form);
   document.body.append(overlay);
 }
-async function createPost(title, body, img, tags) {
+async function createPost(title, body, img) {
   try {
     const formData = new FormData();
     formData.append("title", title);
@@ -536,7 +485,6 @@ async function createPost(title, body, img, tags) {
     if (img) {
       formData.append("image", img);
     }
-    formData.append("tags", JSON.stringify(tags));  // NOT Work Form Backend/////////////////
 
     const response = await fetch(`${baseUrl}/posts`, {
       method: "POST",
@@ -556,7 +504,8 @@ async function createPost(title, body, img, tags) {
     showAlert("Post Created Succussfully", "bg-green-500/80");
     if (!window.location.pathname.includes("profile.html")) {
       postsArea.innerHTML = "";
-      // getPosts();
+      getPosts();
+      document.body.style.overflow = "";
     }
     if (window.location.pathname.includes("profile.html")) {
       document.querySelector(".profile-posts").innerHTML = "";
