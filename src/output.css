@@ -13,6 +13,7 @@
     --color-orange-500: oklch(70.5% 0.213 47.604);
     --color-green-500: oklch(72.3% 0.219 149.579);
     --color-sky-500: oklch(68.5% 0.169 237.323);
+    --color-sky-900: oklch(39.1% 0.09 240.876);
     --color-blue-500: oklch(62.3% 0.214 259.815);
     --color-blue-600: oklch(54.6% 0.245 262.881);
     --color-pink-500: oklch(65.6% 0.241 354.308);
@@ -23,6 +24,7 @@
     --color-gray-600: oklch(44.6% 0.03 256.802);
     --color-gray-700: oklch(37.3% 0.034 259.733);
     --color-gray-800: oklch(27.8% 0.033 256.848);
+    --color-gray-900: oklch(21% 0.034 264.665);
     --color-black: #000;
     --color-white: #fff;
     --spacing: 0.25rem;
@@ -216,17 +218,32 @@
   .top-0 {
     top: 0px;
   }
+  .top-5 {
+    top: calc(var(--spacing) * 5);
+  }
   .right-0 {
     right: 0px;
   }
+  .right-5 {
+    right: calc(var(--spacing) * 5);
+  }
+  .left-0 {
+    left: 0px;
+  }
   .left-3\/6 {
     left: calc(3 / 6 * 100%);
+  }
+  .left-5 {
+    left: calc(var(--spacing) * 5);
   }
   .z-10 {
     z-index: 10;
   }
   .z-100 {
     z-index: 100;
+  }
+  .z-9999 {
+    z-index: 9999;
   }
   .container {
     width: 100%;
@@ -297,8 +314,14 @@
   .h-20 {
     height: calc(var(--spacing) * 20);
   }
+  .h-full {
+    height: 100%;
+  }
   .h-screen {
     height: 100vh;
+  }
+  .max-h-full {
+    max-height: 100%;
   }
   .w-10 {
     width: calc(var(--spacing) * 10);
@@ -311,6 +334,9 @@
   }
   .w-full {
     width: 100%;
+  }
+  .max-w-full {
+    max-width: 100%;
   }
   .flex-1 {
     flex: 1;
@@ -412,11 +438,23 @@
   .border-b-gray-600 {
     border-bottom-color: var(--color-gray-600);
   }
+  .bg-black\/70 {
+    background-color: color-mix(in srgb, #000 70%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-black) 70%, transparent);
+    }
+  }
   .bg-gray-700 {
     background-color: var(--color-gray-700);
   }
   .bg-gray-800 {
     background-color: var(--color-gray-800);
+  }
+  .bg-gray-800\/90 {
+    background-color: color-mix(in srgb, oklch(27.8% 0.033 256.848) 90%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-gray-800) 90%, transparent);
+    }
   }
   .bg-green-500\/80 {
     background-color: color-mix(in srgb, oklch(72.3% 0.219 149.579) 80%, transparent);
@@ -462,6 +500,9 @@
   }
   .p-3 {
     padding: calc(var(--spacing) * 3);
+  }
+  .p-15 {
+    padding: calc(var(--spacing) * 15);
   }
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
@@ -563,6 +604,14 @@
     .hover\:bg-sky-500:hover {
       background-color: var(--color-sky-500);
     }
+    .hover\:text-gray-400\/70:hover {
+      color: color-mix(in srgb, oklch(70.7% 0.022 261.325) 70%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:text-gray-400\/70:hover {
+        color: color-mix(in oklab, var(--color-gray-400) 70%, transparent);
+      }
+    }
     .hover\:text-white:hover {
       color: var(--color-white);
     }
@@ -598,6 +647,10 @@
   }
 }
 @layer components {
+  html {
+    --tw-scrollbar-thumb: var(--color-sky-500);
+    scrollbar-color: var(--tw-scrollbar-thumb) var(--tw-scrollbar-track);
+  }
   .post {
     position: relative;
     overflow: hidden;
@@ -623,6 +676,7 @@
     object-fit: cover;
   }
   .name {
+    cursor: pointer;
     font-family: var(--font-sans);
     font-size: var(--text-lg);
     line-height: var(--tw-leading, var(--text-lg--line-height));
@@ -693,6 +747,7 @@
     height: calc(var(--spacing) * 96);
     width: 100%;
     max-width: 100%;
+    cursor: pointer;
     border-top-left-radius: var(--radius-md);
     border-top-right-radius: var(--radius-md);
     object-fit: cover;
@@ -862,7 +917,7 @@
     flex-direction: column;
     gap: calc(var(--spacing) * 2);
   }
-  .form .field label {
+  .form .field label, .form .tags label {
     font-size: var(--text-lg);
     line-height: var(--tw-leading, var(--text-lg--line-height));
     --tw-font-weight: var(--font-weight-semibold);
@@ -875,6 +930,51 @@
     background-color: var(--color-white);
     padding: calc(var(--spacing) * 2);
     color: var(--color-black);
+  }
+  .form .tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: calc(var(--spacing) * 4);
+    border-radius: var(--radius-xl);
+    background-color: var(--color-gray-900);
+    padding: calc(var(--spacing) * 2);
+  }
+  .form .tags > div input {
+    position: absolute;
+    width: 0px;
+    appearance: none;
+    padding: 0px;
+  }
+  .form .tags > div input + label {
+    display: block;
+    cursor: pointer;
+    border-radius: calc(infinity * 1px);
+    border-style: var(--tw-border-style);
+    border-width: 3px;
+    border-color: var(--color-gray-700);
+    background-color: var(--color-gray-500);
+    padding-inline: calc(var(--spacing) * 3);
+    padding-block: var(--spacing);
+    transition-property: all;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+    --tw-duration: 300ms;
+    transition-duration: 300ms;
+    &:hover {
+      @media (hover: hover) {
+        background-color: color-mix(in srgb, oklch(55.1% 0.027 264.364) 50%, transparent);
+        @supports (color: color-mix(in lab, red, red)) {
+          background-color: color-mix(in oklab, var(--color-gray-500) 50%, transparent);
+        }
+      }
+    }
+  }
+  .form .tags > div input:checked + label {
+    border-style: var(--tw-border-style);
+    border-width: 3px;
+    border-color: var(--color-sky-900);
+    background-color: var(--color-sky-500);
   }
   .form .link-to-account {
     margin-top: calc(var(--spacing) * 5);
@@ -913,6 +1013,7 @@
     position: fixed;
     bottom: calc(var(--spacing) * 4);
     left: calc(3 / 6 * 100%);
+    z-index: 99999;
     display: flex;
     width: calc(var(--spacing) * 100);
     --tw-translate-x: calc(calc(3 / 6 * 100%) * -1);
@@ -1059,6 +1160,16 @@
   inherits: false;
   initial-value: 1;
 }
+@property --tw-scrollbar-thumb {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #0000;
+}
+@property --tw-scrollbar-track {
+  syntax: "<color>";
+  inherits: false;
+  initial-value: #0000;
+}
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -1092,6 +1203,8 @@
       --tw-scale-x: 1;
       --tw-scale-y: 1;
       --tw-scale-z: 1;
+      --tw-scrollbar-thumb: #0000;
+      --tw-scrollbar-track: #0000;
     }
   }
 }

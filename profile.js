@@ -1,6 +1,39 @@
-import { setupUI, baseUrl, showAlert } from "./main.js";
+import {
+  baseUrl,
+  setupUI,
+  showAlert,
+  toggleLoader,
+  showImage,
+} from "./main.js";
 
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get("userid");
+
+if (window.location.pathname.includes("profile.html")) {
+  setupUI();
+  getUser(userId);
+}
+export async function getUser(userID) {
+  try {
+    toggleLoader(true);
+    const response = await fetch(`${baseUrl}/users/${userID}`);
+    if (!response.ok) {
+      showAlert("Request Failed", "bg-red-500/80");
+      throw new Error("Request Failed");
+    }
+    toggleLoader(false);
+    const userResponse = await response.json();
+    const theUser = userResponse.data;
+
+    if (window.location.pathname.includes("profile.html")) {
+      showUserData(theUser);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
 export function showUserData(userObj) {
+  document.title += ` | ${userObj.name}'s Profile`;
   document.getElementById("theName").textContent = userObj.name;
   document.getElementById("theUserName").textContent = `@${userObj.username}`;
   document.getElementById("postsCount").textContent = userObj.posts_count;
@@ -11,15 +44,20 @@ export function showUserData(userObj) {
   } else {
     document.getElementById("userImg").src = userObj.profile_image;
   }
-  getUserPosts(userObj.id);
+  document.getElementById("userImg").addEventListener("click", () => {
+    showImage(document.getElementById("userImg").src);
+  });
+  getUserPosts(userId);
 }
 async function getUserPosts(userID) {
   try {
+    toggleLoader(true);
     const response = await fetch(`${baseUrl}/users/${userID}/posts`);
     if (!response.ok) {
       showAlert("Request Failed", "bg-red-500/80");
       throw new Error("Request Failed");
     }
+    toggleLoader(false);
     const postsResponse = await response.json();
     const userPosts = postsResponse.data;
     userPosts.reverse().forEach((post) => {
@@ -57,32 +95,40 @@ function showPost(postObj) {
   postTimeDiv.append(postTime);
   info.append(userNameDiv, postTimeDiv);
 
-  const icons = document.createElement("div");
-  icons.className = "editsIcons";
+  if (localStorage.getItem("user")) {
+    if (Number(userId) === JSON.parse(localStorage.getItem("user")).id) {
+      const icons = document.createElement("div");
+      icons.className = "editsIcons";
 
-  const editDiv = document.createElement("button");
-  editDiv.className = "icon";
-  const editIcon = document.createElement("i");
-  editIcon.classList.add("fa-light", "fa-pen-to-square");
-  editDiv.append(editIcon);
+      const editDiv = document.createElement("button");
+      editDiv.className = "icon";
+      const editIcon = document.createElement("i");
+      editIcon.classList.add("fa-light", "fa-pen-to-square");
+      editDiv.append(editIcon);
 
-  const deletionDiv = document.createElement("button");
-  deletionDiv.className = "icon";
-  const deleteIcon = document.createElement("i");
-  deleteIcon.classList.add("fa-light", "fa-trash");
-  deletionDiv.append(deleteIcon);
+      const deletionDiv = document.createElement("button");
+      deletionDiv.className = "icon";
+      const deleteIcon = document.createElement("i");
+      deleteIcon.classList.add("fa-light", "fa-trash");
+      deletionDiv.append(deleteIcon);
 
-  icons.append(editDiv, deletionDiv);
+      icons.append(editDiv, deletionDiv);
 
-  header.append(userImg, info, icons);
+      header.append(userImg, info, icons);
 
-  editDiv.addEventListener("click", function (e) {
-    updatePostForm(post.dataset.id);
-  });
+      editDiv.addEventListener("click", function (e) {
+        updatePostForm(post.dataset.id);
+      });
 
-  deletionDiv.addEventListener("click", function (e) {
-    deletePostConfirm(post.dataset.id);
-  });
+      deletionDiv.addEventListener("click", function (e) {
+        deletePostConfirm(post.dataset.id);
+      });
+    } else {
+      header.append(userImg, info);
+    }
+  } else {
+    header.append(userImg, info);
+  }
 
   const body = document.createElement("div");
   body.className = "body";
@@ -94,6 +140,10 @@ function showPost(postObj) {
     bodyImg.alt = "Post Image";
     bodyImg.draggable = false;
     body.append(bodyImg);
+
+    bodyImg.addEventListener("click", () => {
+      showImage(postObj.image);
+    });
   }
   const bodyTitle = document.createElement("h5");
   bodyTitle.className = "body-title";
@@ -258,6 +308,18 @@ async function updatePostForm(postID) {
   const postResponse = await response.json();
   const postData = postResponse.data;
 
+  document.body.style.overflow = "hidden";
+  const overlay = document.createElement("div");
+  overlay.classList.add(
+    "overlay",
+    "fixed",
+    "top-0",
+    "left-0",
+    "z-9999",
+    "bg-black/70",
+    "w-full",
+    "h-full",
+  );
   const form = document.createElement("div");
   form.className = "form";
 
@@ -267,7 +329,8 @@ async function updatePostForm(postID) {
   closeIcon.classList.add("fa-solid", "fa-xmark");
   closeBtn.append(closeIcon);
   closeBtn.addEventListener("click", () => {
-    form.remove();
+    overlay.remove();
+    document.body.style.overflow = "";
     document.querySelectorAll(".icon").forEach((btn) => (btn.disabled = false));
   });
 
@@ -324,7 +387,8 @@ async function updatePostForm(postID) {
   });
 
   form.append(heading, closeBtn, titleDiv, bodyDiv, imageDiv, sendBtn);
-  document.body.append(form);
+  overlay.append(form);
+  document.body.append(overlay);
 }
 async function updatePost(postID, title, body) {
   try {
@@ -341,11 +405,11 @@ async function updatePost(postID, title, body) {
       }),
     });
     const postResponse = await response.json();
-    if (response.status === 422) {
-      showAlert(postResponse.message, "bg-red-500/80");
+    if (!response.ok) {
+      showAlert(postResponse.error_message, "bg-red-500/80");
+      throw new Error("Request Failed");
     }
-    if (!response.ok) throw new Error("Request Failed");
-    document.querySelector(".form").remove();
+    document.querySelector(".overlay").remove();
     document.querySelectorAll(".icon").forEach((btn) => (btn.disabled = false));
     showAlert("Post Updated Succussfully", "bg-green-500/80");
     setTimeout(() => {
@@ -358,6 +422,18 @@ async function updatePost(postID, title, body) {
 function deletePostConfirm(postID) {
   document.querySelectorAll(".icon").forEach((btn) => (btn.disabled = true));
 
+  document.body.style.overflow = "hidden";
+  const overlay = document.createElement("div");
+  overlay.classList.add(
+    "overlay",
+    "fixed",
+    "top-0",
+    "left-0",
+    "z-9999",
+    "bg-black/70",
+    "w-full",
+    "h-full",
+  );
   const form = document.createElement("div");
   form.className = "form";
 
@@ -367,7 +443,8 @@ function deletePostConfirm(postID) {
   closeIcon.classList.add("fa-solid", "fa-xmark");
   closeBtn.append(closeIcon);
   closeBtn.addEventListener("click", () => {
-    form.remove();
+    overlay.remove();
+    document.body.style.overflow = "";
     document.querySelectorAll(".icon").forEach((btn) => (btn.disabled = false));
   });
 
@@ -391,7 +468,8 @@ function deletePostConfirm(postID) {
   });
 
   form.append(heading, closeBtn, bodyDiv, sendBtn);
-  document.body.append(form);
+  overlay.append(form);
+  document.body.append(overlay);
 }
 async function deletePost(postID) {
   try {
@@ -401,9 +479,12 @@ async function deletePost(postID) {
         authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     });
-    if (!response.ok) throw new Error("Request Failed");
     const deleteResponse = await response.json();
-    document.querySelector(".form").remove();
+    if (!response.ok) {
+      showAlert(deleteResponse.error_message, "bg-red-500/80");
+      throw new Error("Request Failed");
+    }
+    document.querySelector(".overlay").remove();
     document.querySelectorAll(".icon").forEach((btn) => (btn.disabled = false));
     showAlert("Post Deleted Succussfully", "bg-green-500/80");
     setTimeout(() => {

@@ -1,4 +1,4 @@
-import { showUserData } from "./profile.js";
+import { showUserData, getUser } from "./profile.js";
 
 export const baseUrl = "https://tarmeezacademy.com/api/v1";
 let currentPage = 1;
@@ -8,12 +8,13 @@ let createPostBtn;
 const postsArea = document.getElementById("content-area");
 
 setupUI();
-if (window.location.pathname.includes("index.html")) {
+if (!window.location.pathname.includes("profile.html")) {
   getPosts();
 }
 
 async function getPosts() {
   try {
+    toggleLoader(true);
     const response = await fetch(
       `${baseUrl}/posts?limit=50&page=${currentPage}`,
     );
@@ -21,6 +22,7 @@ async function getPosts() {
       showAlert("Request Failed", "bg-red-500/80");
       throw new Error("Request Failed");
     }
+    toggleLoader(false);
     const postsResponse = await response.json();
     const posts = postsResponse.data;
     for (let post of posts) {
@@ -53,6 +55,9 @@ function showPost(postObj) {
   } else {
     userImg.src = postObj.author.profile_image;
   }
+  userImg.addEventListener("click", () => {
+    userClicked(postObj.author.id);
+  });
   const info = document.createElement("div");
   const userNameDiv = document.createElement("div");
   const userName = document.createTextNode(postObj.author.name);
@@ -64,6 +69,9 @@ function showPost(postObj) {
   postTimeDiv.append(postTime);
   info.append(userNameDiv, postTimeDiv);
   header.append(userImg, info);
+  userNameDiv.addEventListener("click", () => {
+    userClicked(postObj.author.id);
+  });
 
   const body = document.createElement("div");
   body.className = "body";
@@ -75,6 +83,11 @@ function showPost(postObj) {
     bodyImg.alt = "Post Image";
     bodyImg.draggable = false;
     body.append(bodyImg);
+
+    bodyImg.addEventListener("click", () => {
+      showImage(postObj.image);
+      // console.log(postObj.image.match(/([^\/]+)\.([a-zA-Z0-9]+)$/g)[0]);
+    });
   }
   const bodyTitle = document.createElement("h5");
   bodyTitle.className = "body-title";
@@ -122,6 +135,18 @@ function showPost(postObj) {
   postsArea.append(post);
 }
 function loginForm() {
+  document.body.style.overflow = "hidden";
+  const overlay = document.createElement("div");
+  overlay.classList.add(
+    "overlay",
+    "fixed",
+    "top-0",
+    "left-0",
+    "z-9999",
+    "bg-black/70",
+    "w-full",
+    "h-full",
+  );
   const form = document.createElement("div");
   form.className = "form";
 
@@ -131,7 +156,8 @@ function loginForm() {
   closeIcon.classList.add("fa-solid", "fa-xmark");
   closeBtn.append(closeIcon);
   closeBtn.addEventListener("click", () => {
-    form.remove();
+    overlay.remove();
+    document.body.style.overflow = "";
     mainLoginBtn.disabled = false;
   });
 
@@ -177,7 +203,7 @@ function loginForm() {
   const createAcountSpan = document.createElement("span");
   createAcountSpan.textContent = "Create Acount";
   createAcountSpan.addEventListener("click", () => {
-    form.remove();
+    overlay.remove();
     signUpForm();
   });
   createAcount.append(createAcountText, createAcountSpan);
@@ -190,7 +216,8 @@ function loginForm() {
     sendBtn,
     createAcount,
   );
-  document.body.append(form);
+  overlay.append(form);
+  document.body.append(overlay);
 }
 async function checkUser(userName, password) {
   try {
@@ -212,7 +239,7 @@ async function checkUser(userName, password) {
     const userResponse = await response.json();
     const user = userResponse.user;
     const token = userResponse.token;
-    document.querySelector(".form").remove();
+    document.querySelector(".overlay").remove();
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
     setupUI();
@@ -222,6 +249,18 @@ async function checkUser(userName, password) {
   }
 }
 function signUpForm() {
+  document.body.style.overflow = "hidden";
+  const overlay = document.createElement("div");
+  overlay.classList.add(
+    "overlay",
+    "fixed",
+    "top-0",
+    "left-0",
+    "z-9999",
+    "bg-black/70",
+    "w-full",
+    "h-full",
+  );
   const form = document.createElement("div");
   form.className = "form";
 
@@ -231,7 +270,8 @@ function signUpForm() {
   closeIcon.classList.add("fa-solid", "fa-xmark");
   closeBtn.append(closeIcon);
   closeBtn.addEventListener("click", () => {
-    form.remove();
+    overlay.remove();
+    document.body.style.overflow = "";
     mainLoginBtn.disabled = false;
   });
 
@@ -302,7 +342,7 @@ function signUpForm() {
   const logToAccountSpan = document.createElement("span");
   logToAccountSpan.textContent = "Login";
   logToAccountSpan.addEventListener("click", () => {
-    form.remove();
+    overlay.remove();
     loginForm();
   });
   logToAccount.append(logToAccountText, logToAccountSpan);
@@ -318,7 +358,8 @@ function signUpForm() {
     sendBtn,
     logToAccount,
   );
-  document.body.append(form);
+  overlay.append(form);
+  document.body.append(overlay);
 }
 async function createUser(userName, password, name, email, image) {
   try {
@@ -345,7 +386,7 @@ async function createUser(userName, password, name, email, image) {
       showAlert(userResponse.message, "bg-red-500/80");
     }
     if (!response.ok) throw new Error("Request Failed");
-    document.querySelector(".form").remove();
+    document.querySelector(".overlay").remove();
     loginForm();
     showAlert("Account Created Succussfully", "bg-green-500/80");
   } catch (err) {
@@ -360,6 +401,19 @@ function logout() {
   setupUI();
 }
 function createPostForm() {
+  document.body.style.overflow = "hidden";
+  const overlay = document.createElement("div");
+  overlay.classList.add(
+    "overlay",
+    "fixed",
+    "top-0",
+    "left-0",
+    "z-9999",
+    "bg-black/70",
+    "w-full",
+    "h-full",
+  );
+
   const form = document.createElement("div");
   form.className = "form";
 
@@ -369,7 +423,8 @@ function createPostForm() {
   closeIcon.classList.add("fa-solid", "fa-xmark");
   closeBtn.append(closeIcon);
   closeBtn.addEventListener("click", () => {
-    form.remove();
+    overlay.remove();
+    document.body.style.overflow = "";
     createPostBtn.disabled = false;
   });
 
@@ -400,6 +455,57 @@ function createPostForm() {
   imageInput.accept = "image/*";
   imageDiv.append(imageLabel, imageInput);
 
+  const tagsDiv = document.createElement("div");
+  tagsDiv.className = "field";
+  const tagsLabel = document.createElement("label");
+  tagsLabel.textContent = "Tags";
+  const tags = document.createElement("div");
+  tags.className = "tags";
+
+  let tagsArray = [];
+  let myTags = [];
+
+  let tagsRequest = async () => {
+    const response = await fetch(`${baseUrl}/tags`);
+    if (!response.ok) {
+      showAlert("Request Failed", "bg-red-500/80");
+      throw new Error("Request Failed");
+    }
+    const tagsResponse = await response.json();
+    const theTags = tagsResponse.data;
+
+    for (let i = 0; i < theTags.length; i++) {
+      const tag = document.createElement("div");
+      const checkbox = document.createElement("input");
+      checkbox.id = `tag${i + 1}`;
+      checkbox.type = "checkbox";
+      checkbox.name = "tags";
+      const customCheckbox = document.createElement("label");
+      customCheckbox.setAttribute("for", `tag${i + 1}`);
+      customCheckbox.append(theTags[i].name);
+
+      tag.append(checkbox, customCheckbox);
+      tags.append(tag);
+
+      tagsArray.push(theTags[i]);
+
+      checkbox.addEventListener("change", () => {
+        if (checkbox.checked) {
+          if (!myTags.includes(theTags[i])) {
+            myTags.push(theTags[i]);
+          }
+        } else {
+          const index = myTags.indexOf(theTags[i]);
+          if (index > -1) {
+            myTags.splice(index, 1);
+          }
+        }
+      });
+    }
+    tagsDiv.append(tagsLabel, tags);
+  };
+  tagsRequest();
+
   const sendBtn = document.createElement("button");
   sendBtn.textContent = "Create Post";
   sendBtn.className = "send-btn";
@@ -408,19 +514,21 @@ function createPostForm() {
     const title = titleInput.value;
     const body = bodyInput.value;
     const img = imageInput.files[0];
+    const tags = myTags;
     if (title === "" && body === "" && img === "") {
       showAlert("Please fill in any field", "bg-orange-500/80");
       sendBtn.disabled = false;
       return;
     }
-    createPost(title, body, img);
+    createPost(title, body, img, tags);
     sendBtn.disabled = false;
   });
 
-  form.append(heading, closeBtn, titleDiv, bodyDiv, imageDiv, sendBtn);
-  document.body.append(form);
+  form.append(heading, closeBtn, titleDiv, bodyDiv, imageDiv, tagsDiv, sendBtn);
+  overlay.append(form);
+  document.body.append(overlay);
 }
-async function createPost(title, body, img) {
+async function createPost(title, body, img, tags) {
   try {
     const formData = new FormData();
     formData.append("title", title);
@@ -428,6 +536,7 @@ async function createPost(title, body, img) {
     if (img) {
       formData.append("image", img);
     }
+    formData.append("tags", JSON.stringify(tags));  // NOT Work Form Backend/////////////////
 
     const response = await fetch(`${baseUrl}/posts`, {
       method: "POST",
@@ -442,17 +551,17 @@ async function createPost(title, body, img) {
       showAlert(postResponse.message, "bg-red-500/80");
     }
     if (!response.ok) throw new Error("Request Failed");
-    document.querySelector(".form").remove();
+    document.querySelector(".overlay").remove();
     createPostBtn.disabled = false;
     showAlert("Post Created Succussfully", "bg-green-500/80");
-    if (window.location.pathname === "/index.html") {
+    if (!window.location.pathname.includes("profile.html")) {
       postsArea.innerHTML = "";
-      getPosts();
+      // getPosts();
     }
-    if (window.location.pathname === "/profile.html") {
+    if (window.location.pathname.includes("profile.html")) {
       document.querySelector(".profile-posts").innerHTML = "";
       const user = JSON.parse(localStorage.getItem("user"));
-      getUser(user.id);
+      window.location.reload();
     }
   } catch (err) {
     console.log(err);
@@ -632,10 +741,8 @@ function profilePopUp(user, profileImage) {
           </a>
         </li>
         <li id="profileLink" class="p-3 cursor-pointer transition-all duration-300 hover:bg-black/20">
-          <a href="profile.html" class="w-full block">
-            <i class="fa-light fa-user text-gray-400"></i>
-            <span class="ml-1 text-white">Profile</span>
-          </a>
+          <i class="fa-light fa-user text-gray-400"></i>
+          <span class="ml-1 text-white">Profile</span>
         </li>
         <li id="logout-btn" class="p-3 cursor-pointer transition-all duration-300 hover:bg-black/20">
             <i class="fa-thin fa-right-to-bracket text-gray-400"></i>
@@ -647,24 +754,88 @@ function profilePopUp(user, profileImage) {
     document.getElementById("profile-popup").classList.add("hidden");
   });
   document.getElementById("logout-btn").addEventListener("click", logout);
-  document.getElementById("profileLink").onclick = getUser(user.id);
+  document.getElementById("profileLink").addEventListener("click", () => {
+    userClicked(user.id);
+  });
 }
-async function getUser(userID) {
-  try {
-    const response = await fetch(`${baseUrl}/users/${userID}`);
-    if (!response.ok) {
-      showAlert("Request Failed", "bg-red-500/80");
-      throw new Error("Request Failed");
-    }
-    const userResponse = await response.json();
-    const theUser = userResponse.data;
+function userClicked(userID) {
+  window.location = `profile.html?userid=${userID}`;
+}
+export function showImage(imageUrl) {
+  document.body.style.overflow = "hidden";
+  const imageContainer = document.createElement("div");
+  imageContainer.classList.add(
+    "fixed",
+    "top-0",
+    "left-0",
+    "z-9999",
+    "bg-gray-800/90",
+    "w-full",
+    "h-full",
+  );
+  const closeIcon = document.createElement("i");
+  closeIcon.classList.add(
+    "fa-solid",
+    "fa-xmark",
+    "absolute",
+    "top-5",
+    "left-5",
+    "text-3xl",
+    "cursor-pointer",
+    "text-gray-400",
+    "transition-all",
+    "duration-300",
+    "hover:text-gray-400/70",
+  );
+  closeIcon.addEventListener("click", () => {
+    imageContainer.remove();
+    document.body.style.overflow = "";
+  });
+  const downloadIcon = document.createElement("i");
+  downloadIcon.classList.add(
+    "fa-regular",
+    "fa-download",
+    "absolute",
+    "top-5",
+    "right-5",
+    "text-3xl",
+    "cursor-pointer",
+    "text-gray-400",
+    "transition-all",
+    "duration-300",
+    "hover:text-gray-400/70",
+  );
+  downloadIcon.addEventListener("click", async () => {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
 
-    if (window.location.pathname.includes("profile.html")) {
-      showUserData(theUser);
-    }
-  } catch (err) {
-    console.log(err);
-  }
+    const fileName = imageUrl.match(/([^\/]+)\.([a-zA-Z0-9]+)$/g)[0];
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(link.href);
+  });
+  const imageHolder = document.createElement("div");
+  imageHolder.classList.add(
+    "w-full",
+    "h-full",
+    "p-15",
+    "flex",
+    "justify-center",
+    "items-center",
+  );
+  const image = document.createElement("img");
+  image.src = imageUrl;
+  image.classList.add("max-w-full", "max-h-full", "object-cover");
+
+  imageHolder.append(image);
+  imageContainer.append(closeIcon, downloadIcon, imageHolder);
+  document.body.append(imageContainer);
 }
 export function showAlert(message, style) {
   const div = document.createElement("div");
@@ -689,11 +860,14 @@ function handleInfinityScroll() {
     document.documentElement.scrollHeight;
 
   if (endOfPage) {
-    document.getElementById("post-loading").classList.remove("invisible");
     currentPage++;
     getPosts();
-    setTimeout(() => {
-      document.getElementById("post-loading").classList.add("invisible");
-    }, 5000);
+  }
+}
+export function toggleLoader(show = true) {
+  if (show) {
+    document.getElementById("post-loading").classList.remove("invisible");
+  } else {
+    document.getElementById("post-loading").classList.add("invisible");
   }
 }
