@@ -139,6 +139,7 @@ function showPost(postObj) {
     bodyImg.src = postObj.image;
     bodyImg.alt = "Post Image";
     bodyImg.draggable = false;
+    bodyImg.loading = "lazy";
     body.append(bodyImg);
 
     bodyImg.addEventListener("click", () => {

@@ -82,11 +82,11 @@ function showPost(postObj) {
     bodyImg.src = postObj.image;
     bodyImg.alt = "Post Image";
     bodyImg.draggable = false;
+    bodyImg.loading = "lazy";
     body.append(bodyImg);
 
     bodyImg.addEventListener("click", () => {
       showImage(postObj.image);
-      // console.log(postObj.image.match(/([^\/]+)\.([a-zA-Z0-9]+)$/g)[0]);
     });
   }
   const bodyTitle = document.createElement("h5");
@@ -805,8 +805,9 @@ export function showAlert(message, style) {
 }
 function handleInfinityScroll() {
   const endOfPage =
-    window.innerHeight + window.pageYOffset ===
-    document.documentElement.scrollHeight;
+    document.documentElement.scrollTop +
+      document.documentElement.clientHeight >=
+    document.documentElement.scrollHeight - 50;
 
   if (endOfPage) {
     currentPage++;
