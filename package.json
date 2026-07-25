@@ -1,9 +1,8 @@
 {
   "scripts": {
-    "watch": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch",
-    "build": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css"
+    "build": "tailwindcss -i ./src/input.css -o ./src/output.css"
   },
-  "dependencies": {
+  "devDependencies": {
     "@tailwindcss/cli": "^4.3.3",
     "tailwindcss": "^4.3.3"
   }
