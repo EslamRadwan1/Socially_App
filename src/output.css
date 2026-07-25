@@ -773,6 +773,7 @@
     line-height: var(--tw-leading, var(--text-2xl--line-height));
     --tw-font-weight: var(--font-weight-bold);
     font-weight: var(--font-weight-bold);
+    overflow-wrap: break-word;
     color: var(--color-white);
   }
   .body-text {
@@ -784,6 +785,7 @@
     line-height: var(--tw-leading, var(--text-xl--line-height));
     --tw-font-weight: var(--font-weight-semibold);
     font-weight: var(--font-weight-semibold);
+    overflow-wrap: break-word;
     color: var(--color-white);
   }
   .footer {
