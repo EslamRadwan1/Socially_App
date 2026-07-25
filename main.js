@@ -6,6 +6,7 @@ const navBtns = document.getElementById("buttons");
 let mainLoginBtn;
 let createPostBtn;
 const postsArea = document.getElementById("content-area");
+let isLoading = false;
 
 setupUI();
 if (!window.location.pathname.includes("profile.html")) {
@@ -23,6 +24,7 @@ async function getPosts() {
       throw new Error("Request Failed");
     }
     toggleLoader(false);
+    isLoading = false;
     const postsResponse = await response.json();
     const posts = postsResponse.data;
     for (let post of posts) {
@@ -807,9 +809,10 @@ function handleInfinityScroll() {
   const endOfPage =
     document.documentElement.scrollTop +
       document.documentElement.clientHeight >=
-    document.documentElement.scrollHeight - 50;
+    document.documentElement.scrollHeight - 100;
 
-  if (endOfPage) {
+  if (endOfPage && !isLoading) {
+    isLoading = true;
     currentPage++;
     getPosts();
   }
