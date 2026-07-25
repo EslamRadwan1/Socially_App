@@ -528,7 +528,7 @@ function showComments(postID) {
   postComments.classList.add("comments-show");
 
   const content = `
-    <div class="top-0 flex items-center w-full border-b border-b-gray-600 pb-2 mb-4">
+    <div class="top-0 flex items-center w-full border-b border-b-gray-600 pb-2 mb-4 select-none">
       <div id="closeComments" class="size-8 flex items-center justify-center cursor-pointer transition-all duration-300 hover:bg-black/20">
         <i class="fa-regular fa-arrow-left text-gray-400"></i>
       </div>

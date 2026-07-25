@@ -10,13 +10,13 @@
     @apply rounded-xl overflow-hidden shadow-xl relative;
   }
   .header {
-    @apply flex items-center gap-2 bg-gray-700 p-2;
+    @apply flex items-center gap-2 bg-gray-700 p-2 select-none;
   }
   .header-img {
-    @apply size-10 rounded-full border-2 border-white object-cover cursor-pointer;
+    @apply size-10 rounded-full border-2 border-white object-cover cursor-pointer select-none;
   }
   .name {
-    @apply text-lg font-medium font-sans text-white cursor-pointer;
+    @apply text-lg font-medium font-sans text-white cursor-pointer select-none;
   }
   .time {
     @apply text-xs text-gray-200;
@@ -40,7 +40,7 @@
     @apply w-full bg-gray-600 border-y p-4;
   }
   .body-img {
-    @apply mx-auto w-full max-w-full h-96 object-cover rounded-t-md cursor-pointer;
+    @apply mx-auto w-full max-w-full h-96 object-cover rounded-t-md cursor-pointer select-none;
   }
   .body-title {
     @apply text-white text-2xl font-bold p-1 bg-gray-500;
@@ -49,7 +49,7 @@
     @apply text-white text-xl font-semibold p-2 bg-gray-500 rounded-b-md;
   }
   .footer {
-    @apply bg-gray-700 text-white p-4 text-lg flex items-center gap-2;
+    @apply bg-gray-700 text-white p-4 text-lg flex items-center gap-2 select-none;
   }
   .comments {
     @apply flex items-center gap-1 cursor-pointer;
@@ -90,7 +90,7 @@
   .form .field {
     @apply flex flex-col gap-2 mb-5;
   }
-  .form .field label{
+  .form .field label {
     @apply text-lg font-semibold;
   }
   .form .field input,
