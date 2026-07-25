@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "tailwindcss -i ./src/input.css -o ./src/output.css"
+    "build": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.3.3",
